@@ -1,0 +1,24 @@
+{
+  "name": "jcast",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/jcast.js",
+  "types": "lib",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/edgaralexanderfr/jcast.git"
+  },
+  "author": "Edgar Alexander Franco <edgaralexanderfr@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/edgaralexanderfr/jcast/issues"
+  },
+  "homepage": "https://github.com/edgaralexanderfr/jcast#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
+}
