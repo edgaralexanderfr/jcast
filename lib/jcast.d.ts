@@ -1,4 +1,15 @@
 declare namespace jcast {
+    class Block {
+        private _wall?;
+        constructor({ wall }?: {
+            wall?: Wall;
+        });
+        get wall(): Wall | undefined;
+        set wall(value: Wall | undefined);
+        render(renderer: Renderer, px: number, origin: Vector3, target: Vector3, step: Vector3): void;
+    }
+}
+declare namespace jcast {
     abstract class Interactive {
         transform: Transform;
         constructor({ transform }?: {
@@ -9,12 +20,37 @@ declare namespace jcast {
 declare namespace jcast {
     class Camera extends Interactive {
         private _farClipPlane;
-        get farClipPlane(): number;
-        set farClipPlane(value: number);
         constructor({ transform, farClipPlane }?: {
             transform?: Transform;
             farClipPlane?: number;
         });
+        get farClipPlane(): number;
+        set farClipPlane(value: number);
+    }
+}
+declare namespace jcast {
+    class Color {
+        private _hexString?;
+        private _r;
+        private _g;
+        private _b;
+        private _a;
+        constructor({ r, g, b, a }?: {
+            r?: number;
+            g?: number;
+            b?: number;
+            a?: number;
+        });
+        get r(): number;
+        set r(value: number);
+        get g(): number;
+        set g(value: number);
+        get b(): number;
+        set b(value: number);
+        get a(): number;
+        set a(value: number);
+        toHexString(prefixed?: boolean): string;
+        toRGBAString(): string;
     }
 }
 declare namespace jcast {
@@ -24,6 +60,7 @@ declare namespace jcast {
             canvas: HTMLCanvasElement;
             map?: Map;
         });
+        get renderer(): Renderer;
     }
 }
 declare namespace jcast {
@@ -33,16 +70,7 @@ declare namespace jcast {
         private _height;
         private _depth;
         private _name?;
-        get activeCamera(): Camera | undefined;
-        set activeCamera(value: Camera | undefined);
-        get width(): number;
-        set width(value: number);
-        get height(): number;
-        set height(value: number);
-        get depth(): number;
-        set depth(value: number);
-        get name(): string | undefined;
-        set name(value: string | undefined);
+        private _blocks;
         constructor({ camera, width, height, depth, name }?: {
             camera?: Camera;
             width?: number;
@@ -50,24 +78,57 @@ declare namespace jcast {
             depth?: number;
             name?: string | undefined;
         });
+        get activeCamera(): Camera | undefined;
+        set activeCamera(value: Camera | undefined);
+        get width(): number;
+        get height(): number;
+        get depth(): number;
+        set depth(value: number);
+        get name(): string | undefined;
+        set name(value: string | undefined);
+        nullify(): void;
+        getBlock(x: number, y: number): Block | null;
+        setBlock(x: number, y: number, block: Block | null): void;
     }
 }
 declare namespace jcast {
     class Renderer {
+        static readonly RENDER_MODE_NONE = 0;
+        static readonly RENDER_MODE_RAF = 1;
+        static readonly RENDER_MODE_INTERVAL = 2;
+        static readonly requestAnimationFrame: ((callback: FrameRequestCallback) => number) & typeof requestAnimationFrame;
+        static readonly cancelAnimationFrame: ((handle: number) => void) & typeof cancelAnimationFrame;
         private _canvas;
-        private _map?;
         private _width;
         private _height;
         private _context;
-        get canvas(): HTMLCanvasElement;
-        set canvas(value: HTMLCanvasElement);
-        get map(): Map | undefined;
-        set map(value: Map | undefined);
-        get context(): CanvasRenderingContext2D | null;
-        constructor({ canvas, map }: {
+        private _ps;
+        private _fps;
+        private _map?;
+        private _rendering;
+        private _renderMode;
+        private _intervalID;
+        constructor({ canvas, map, ps, fps }: {
             canvas: HTMLCanvasElement;
+            ps?: number;
+            fps?: number;
             map?: Map;
         });
+        get canvas(): HTMLCanvasElement;
+        set canvas(value: HTMLCanvasElement);
+        get width(): number;
+        get height(): number;
+        get context(): CanvasRenderingContext2D | null;
+        get ps(): number;
+        set ps(value: number);
+        get fps(): number;
+        set fps(value: number);
+        get map(): Map | undefined;
+        set map(value: Map | undefined);
+        get renderMode(): number;
+        start(): void;
+        stop(): void;
+        private render;
     }
 }
 declare namespace jcast {
@@ -91,6 +152,16 @@ declare namespace jcast {
             y?: number;
             z?: number;
         });
+    }
+}
+declare namespace jcast {
+    class Wall {
+        private _color?;
+        constructor({ color }?: {
+            color?: Color;
+        });
+        get color(): Color | undefined;
+        set color(value: Color | undefined);
     }
 }
 declare namespace jcast {
