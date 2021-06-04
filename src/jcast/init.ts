@@ -1,5 +1,5 @@
 namespace jcast {
-    export function init (canvas:HTMLCanvasElement, map?:Map) {
-        return new JCast(canvas, map);
-    }
+  export function init({ canvas, map = undefined }: { canvas: HTMLCanvasElement, map?: Map }): JCast {
+    return new JCast({ canvas, map });
+  }
 }
