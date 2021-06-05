@@ -6,7 +6,7 @@
   "types": "lib",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc -p .",
+    "build": "tsc -p . && uglifyjs lib/jcast.js -o lib/jcast.min.js",
     "app": "node app.js",
     "open": "xdg-open http://localhost:9999"
   },
@@ -22,6 +22,7 @@
   "homepage": "https://github.com/edgaralexanderfr/jcast#readme",
   "devDependencies": {
     "express": "^4.17.1",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.2",
+    "uglify-js": "^3.13.9"
   }
 }
