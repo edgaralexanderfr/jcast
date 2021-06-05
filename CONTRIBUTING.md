@@ -15,22 +15,35 @@
 
 ## Mounting development environment
 
-### Debugging
+### Mounting
 
-#### VSCode
-
-Create _.vscode/launch.json_ file:
+Clone the repository:
 
 ```bash
-cp .vscode/launch.json.example .vscode/launch.json
+git clone https://github.com/edgaralexanderfr/jcast.git
+cd jcast/
 ```
 
-### Linting
-
-#### VSCode
-
-Create _.vscode/settings.json_ file:
+Install node dependencies:
 
 ```bash
-cp .vscode/settings.json.example .vscode/settings.json
+npm install
+```
+
+If you're using VSCode you can use the following command to init and create the local files:
+
+```bash
+npm run init-for-vscode
+```
+
+otherwise:
+
+```bash
+npm run init
+```
+
+Start the application:
+
+```bash
+npm run app
 ```

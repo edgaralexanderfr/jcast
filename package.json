@@ -5,10 +5,12 @@
   "main": "lib/jcast.js",
   "types": "lib",
   "scripts": {
+    "init": "cp .env.example .env",
+    "init-for-vscode": "npm run init && cp .vscode/launch.json.example .vscode/launch.json && cp .vscode/settings.json.example .vscode/settings.json",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p . && uglifyjs lib/jcast.js -o lib/jcast.min.js",
-    "app": "node app.js",
-    "open": "google-chrome http://localhost:9999 --new-window"
+    "app": "PORT=$(grep APP_PORT .env | cut -d '=' -f2) node app.js",
+    "open": "google-chrome $(grep APP_URL .env | cut -d '=' -f2) --new-window"
   },
   "repository": {
     "type": "git",
