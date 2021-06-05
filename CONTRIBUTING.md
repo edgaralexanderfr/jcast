@@ -11,6 +11,7 @@
 
 1. EditorConfig: https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig
 2. Debugger for Chrome: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome
+3. VsCode Action Buttons: https://marketplace.visualstudio.com/items?itemName=seunlanlege.action-buttons
 
 ## Mounting development environment
 

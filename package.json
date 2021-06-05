@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p . && uglifyjs lib/jcast.js -o lib/jcast.min.js",
     "app": "node app.js",
-    "open": "xdg-open http://localhost:9999"
+    "open": "google-chrome http://localhost:9999 --new-window"
   },
   "repository": {
     "type": "git",
