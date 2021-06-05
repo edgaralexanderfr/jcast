@@ -1,3 +1,6 @@
+.vscode/*
+!.vscode/launch.json.example
+!.vscode/settings.json.example
 dev/*
 !dev/.gitkeep
 node_modules
