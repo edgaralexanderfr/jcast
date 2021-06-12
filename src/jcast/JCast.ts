@@ -9,5 +9,13 @@ namespace jcast {
     get renderer(): Renderer {
       return this._renderer;
     }
+
+    public start(): void {
+      this.renderer.start();
+    }
+
+    public stop(): void {
+      this.renderer.start();
+    }
   }
 }

@@ -47,3 +47,9 @@ Start the application:
 ```bash
 npm run app
 ```
+
+### Developing
+
+Create an _index.html_ file into your _./dev_ folder and include the compiled engine file from _../lib/jcast.js_, keep in mind that in order to debug your changes, you need to include this file and not the minified one.
+
+Once you have included the library into your HTML file, you will be able to access and call all the JCast functions, classes and methods of the engine.

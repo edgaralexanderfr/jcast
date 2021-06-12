@@ -74,12 +74,29 @@ namespace jcast {
         return null;
       }
 
-      return this._blocks[Math.floor(x)][Math.floor(y)];
+      let blockX: number = Math.floor(x);
+      let blockY: number = Math.floor(y);
+      let block: Block | null = this._blocks[blockX][blockY];
+
+      if (block) {
+        block.transform.position.x = blockX;
+        block.transform.position.y = blockY;
+      }
+
+      return block;
     }
 
     public setBlock(x: number, y: number, block: Block | null) {
       if (x >= 0 && y >= 0 && x < this.width && y < this.height) {
-        this._blocks[Math.floor(x)][Math.floor(y)] = block;
+        let blockX: number = Math.floor(x);
+        let blockY: number = Math.floor(y);
+
+        if (block) {
+          block.transform.position.x = blockX;
+          block.transform.position.y = blockY;
+        }
+
+        this._blocks[blockX][blockY] = block;
       }
     }
   }

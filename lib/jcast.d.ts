@@ -1,20 +1,21 @@
 declare namespace jcast {
-    class Block {
-        private _wall?;
-        constructor({ wall }?: {
-            wall?: Wall;
-        });
-        get wall(): Wall | undefined;
-        set wall(value: Wall | undefined);
-        render(renderer: Renderer, px: number, origin: Vector3, target: Vector3, step: Vector3): void;
-    }
-}
-declare namespace jcast {
     abstract class Interactive {
         transform: Transform;
         constructor({ transform }?: {
             transform?: Transform;
         });
+    }
+}
+declare namespace jcast {
+    class Block extends Interactive {
+        private _wall?;
+        constructor({ wall, transform }?: {
+            wall?: Wall;
+            transform?: Transform;
+        });
+        get wall(): Wall | undefined;
+        set wall(value: Wall | undefined);
+        render(renderer: Renderer, fx: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, step: Vector3, target: Vector3): void;
     }
 }
 declare namespace jcast {
@@ -61,6 +62,8 @@ declare namespace jcast {
             map?: Map;
         });
         get renderer(): Renderer;
+        start(): void;
+        stop(): void;
     }
 }
 declare namespace jcast {
@@ -92,25 +95,32 @@ declare namespace jcast {
     }
 }
 declare namespace jcast {
+    class Mathf {
+        static readonly HALF_PI: number;
+    }
+}
+declare namespace jcast {
     class Renderer {
         static readonly RENDER_MODE_NONE = 0;
         static readonly RENDER_MODE_RAF = 1;
         static readonly RENDER_MODE_INTERVAL = 2;
         static readonly requestAnimationFrame: ((callback: FrameRequestCallback) => number) & typeof requestAnimationFrame;
-        static readonly cancelAnimationFrame: ((handle: number) => void) & typeof cancelAnimationFrame;
         private _canvas;
         private _width;
         private _height;
         private _context;
-        private _ps;
+        private _fov;
         private _fps;
         private _map?;
         private _rendering;
         private _renderMode;
         private _intervalID;
-        constructor({ canvas, map, ps, fps }: {
+        private _origin;
+        private _target;
+        private _step;
+        constructor({ canvas, map, fov, fps }: {
             canvas: HTMLCanvasElement;
-            ps?: number;
+            fov?: number;
             fps?: number;
             map?: Map;
         });
@@ -119,8 +129,8 @@ declare namespace jcast {
         get width(): number;
         get height(): number;
         get context(): CanvasRenderingContext2D | null;
-        get ps(): number;
-        set ps(value: number);
+        get fov(): number;
+        set fov(value: number);
         get fps(): number;
         set fps(value: number);
         get map(): Map | undefined;
