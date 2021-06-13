@@ -130,6 +130,11 @@ namespace jcast {
       let ty: number = oy + yl;
       let xs: number = Math.cos(activeCamera.transform.rotation.y + Mathf.HALF_PI);
       let ys: number = Math.sin(activeCamera.transform.rotation.y + Mathf.HALF_PI);
+      let hd: number = ox - tx;
+      let vd: number = oy - ty;
+      let st: number = Math.abs(hd) > Math.abs(vd) ? Math.abs(hd) : Math.abs(vd);
+      let xd: number = hd / st;
+      let yd: number = vd / st;
 
       // Draw white background:
       this._context!.fillStyle = 'white';
@@ -165,6 +170,11 @@ namespace jcast {
       let ch: number = 3;
       this.context!.fillStyle = 'blue';
       this.context?.fillRect(activeCamera.transform.position.x - (cw / 2), activeCamera.transform.position.y - (ch / 2), cw, ch);
+      //
+
+      // Draw directions steps:
+      this._context!.font = '16px Arial Bold';
+      this._context?.fillText(`XD: ${xd} YD: ${yd}`, 20, 20);
       //
 
       if (this._renderMode == Renderer.RENDER_MODE_RAF) {
