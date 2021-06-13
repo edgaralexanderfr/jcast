@@ -15,7 +15,7 @@ namespace jcast {
     }
 
     public stop(): void {
-      this.renderer.start();
+      this.renderer.stop();
     }
   }
 }
