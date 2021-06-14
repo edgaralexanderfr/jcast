@@ -122,59 +122,147 @@ namespace jcast {
       }
 
       let activeCamera: Camera = this._map.activeCamera;
-      let ox: number = activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
-      let oy: number = activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
+
+      this._origin.x = activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
+      this._origin.y = activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
+
       let xl: number = Math.cos(activeCamera.transform.rotation.y) * activeCamera.farClipPlane;
       let yl: number = Math.sin(activeCamera.transform.rotation.y) * activeCamera.farClipPlane;
-      let tx: number = ox + xl;
-      let ty: number = oy + yl;
-      let xs: number = Math.cos(activeCamera.transform.rotation.y + Mathf.HALF_PI);
-      let ys: number = Math.sin(activeCamera.transform.rotation.y + Mathf.HALF_PI);
-      let hd: number = ox - tx;
-      let vd: number = oy - ty;
+      let tx: number = this._origin.x + xl;
+      let ty: number = this._origin.y + yl;
+      let fs: number = this._fov / this._width;
+      let xs: number = Math.cos(activeCamera.transform.rotation.y + Mathf.HALF_PI) * fs;
+      let ys: number = Math.sin(activeCamera.transform.rotation.y + Mathf.HALF_PI) * fs;
+      let hd: number = this._origin.x - tx;
+      let vd: number = this._origin.y - ty;
       let st: number = Math.abs(hd) > Math.abs(vd) ? Math.abs(hd) : Math.abs(vd);
       let xd: number = hd / st;
       let yd: number = vd / st;
 
       // Draw white background:
-      this._context!.fillStyle = 'white';
-      this._context?.fillRect(0, 0, this.width, this.height);
+      // this._context!.fillStyle = 'white';
+      // this._context?.fillRect(0, 0, this.width, this.height);
       //
 
-      for (let f: number = 0; f < this._fov; f += 1) {
+      for (let fx: number = 0; fx < this._fov; fx += fs) {
+        let oxi = Math.floor(this._origin.x);
+        let oyi = Math.floor(this._origin.y);
+        let txi = Math.floor(tx);
+        let tyi = Math.floor(ty);
+        let oxip1 = oxi + 1;
+        let oyip1 = oyi + 1;
+        let txip1 = txi + 1;
+        let tyip1 = tyi + 1;
+
+        if (oxi == txi && oyi == tyi) {
+          let block: Block | null = this._map.getBlock(txi, tyi);
+
+          if (block) {
+            block.transform.position.x = txi;
+            block.transform.position.y = tyi;
+          }
+
+          this._target.x = tx;
+          this._target.y = ty;
+
+          block?.render(this, fx, true, false, this._origin, this._step, this._target);
+        } else {
+          if (xd == -1 || xd == 1) {
+            if (xd == -1) {
+              this._target.x = txip1;
+            } else {
+              this._target.x = txi;
+            }
+          } else {
+            if (yd == -1) {
+              this._target.x = tx - ((tyip1 - ty) * xd);
+            } else {
+              this._target.x = tx - ((ty - tyi) * xd);
+            }
+          }
+
+          if (yd == -1 || yd == 1) {
+            if (yd == -1) {
+              this._target.y = tyip1;
+            } else {
+              this._target.y = tyi;
+            }
+          } else {
+            if (xd == -1) {
+              this._target.y = ty - ((txip1 - tx) * yd);
+            } else {
+              this._target.y = ty - ((tx - txi) * yd);
+            }
+          }
+
+          let block: Block | null;
+
+          do {
+            this._target.x += xd;
+            this._target.y += yd;
+
+            block = this._map.getBlock(this._target.x, this._target.y);
+
+            if (
+              (
+                xd == 0 ||
+                (xd < 0 && this._target.x <= oxip1) ||
+                (xd > 0 && this._target.x >= oxi)
+              ) && (
+                yd == 0 ||
+                (yd < 0 && this._target.y <= oyip1) ||
+                (yd > 0 && this._target.y >= oyi)
+              )
+            ) {
+              // Draw the reached point:
+              // let pw: number = 3;
+              // let ph: number = 3;
+              // this.context!.fillStyle = 'red';
+              // this.context?.fillRect(this._target.x - (pw / 2), this._target.y - (ph / 2), pw, ph);
+              //
+
+              break;
+            }
+
+            block?.render(this, fx, false, true, this._origin, this._step, this._target);
+          } while (true);
+
+          block?.render(this, fx, true, true, this._origin, this._step, this._target);
+        }
+
         // Draw line from target to origin:
-        this._context!.strokeStyle = 'rgba(0, 255, 0, 0.5)';
-        this._context?.beginPath();
-        this._context?.moveTo(tx, ty);
-        this._context?.lineTo(ox, oy);
-        this._context?.stroke();
+        // this._context!.strokeStyle = 'rgba(0, 255, 0, 0.5)';
+        // this._context?.beginPath();
+        // this._context?.moveTo(tx, ty);
+        // this._context?.lineTo(this._origin.x, this._origin.y);
+        // this._context?.stroke();
         //
 
-        ox += xs;
-        oy += ys;
+        this._origin.x += xs;
+        this._origin.y += ys;
 
         tx += xs;
         ty += ys;
       }
 
       // Draw angle:
-      this._context!.strokeStyle = 'red';
-      this._context?.beginPath();
-      this._context?.moveTo(activeCamera.transform.position.x, activeCamera.transform.position.y);
-      this._context?.lineTo(activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y) * activeCamera.farClipPlane), activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y) * activeCamera.farClipPlane));
-      this._context?.stroke();
+      // this._context!.strokeStyle = 'red';
+      // this._context?.beginPath();
+      // this._context?.moveTo(activeCamera.transform.position.x, activeCamera.transform.position.y);
+      // this._context?.lineTo(activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y) * activeCamera.farClipPlane), activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y) * activeCamera.farClipPlane));
+      // this._context?.stroke();
       //
 
       // Draw camera point:
-      let cw: number = 3;
-      let ch: number = 3;
-      this.context!.fillStyle = 'blue';
-      this.context?.fillRect(activeCamera.transform.position.x - (cw / 2), activeCamera.transform.position.y - (ch / 2), cw, ch);
+      // let cw: number = 3;
+      // let ch: number = 3;
+      // this.context!.fillStyle = 'blue';
+      // this.context?.fillRect(activeCamera.transform.position.x - (cw / 2), activeCamera.transform.position.y - (ch / 2), cw, ch);
       //
 
       // Draw directions steps:
-      this._context!.font = '16px Arial Bold';
-      this._context?.fillText(`XD: ${xd} YD: ${yd}`, 20, 20);
+      // this._context!.font = '16px Arial Bold';
+      // this._context?.fillText(`XD: ${xd} YD: ${yd}`, 20, 20);
       //
 
       if (this._renderMode == Renderer.RENDER_MODE_RAF) {
