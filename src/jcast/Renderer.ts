@@ -18,6 +18,7 @@ namespace jcast {
     private _renderMode: number = Renderer.RENDER_MODE_NONE;
     private _intervalID: number = 0;
     private _origin: Vector3 = new Vector3();
+    private _relative: Vector3 = new Vector3();
     private _target: Vector3 = new Vector3();
     private _step: Vector3 = new Vector3();
 
@@ -122,29 +123,24 @@ namespace jcast {
       }
 
       let activeCamera: Camera = this._map.activeCamera;
-
-      this._origin.x = activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
-      this._origin.y = activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y - Mathf.HALF_PI) * (this._fov / 2));
-
+      let eulerAngles: Vector3 = activeCamera.transform.eulerAngles;
       let xl: number = Math.cos(activeCamera.transform.rotation.y) * activeCamera.farClipPlane;
       let yl: number = Math.sin(activeCamera.transform.rotation.y) * activeCamera.farClipPlane;
-      let tx: number = this._origin.x + xl;
-      let ty: number = this._origin.y + yl;
-      let fs: number = this._fov / this._width;
-      let xs: number = Math.cos(activeCamera.transform.rotation.y + Mathf.HALF_PI) * fs;
-      let ys: number = Math.sin(activeCamera.transform.rotation.y + Mathf.HALF_PI) * fs;
-      let hd: number = this._origin.x - tx;
-      let vd: number = this._origin.y - ty;
-      let st: number = Math.abs(hd) > Math.abs(vd) ? Math.abs(hd) : Math.abs(vd);
-      let xd: number = hd / st;
-      let yd: number = vd / st;
+      let hf: number = this._fov / 2;
+      let tf: number = eulerAngles.y + hf;
 
-      // Draw white background:
-      // this._context!.fillStyle = 'white';
-      // this._context?.fillRect(0, 0, this.width, this.height);
-      //
+      this._origin.x = activeCamera.transform.position.x;
+      this._origin.y = activeCamera.transform.position.y;
 
-      for (let fx: number = 0; fx < this._fov; fx += fs) {
+      for (let a: number = eulerAngles.y - hf; a < tf; a++) {
+        let ar: number = Mathf.degToRad(a);
+        let tx: number = activeCamera.transform.position.x + (Math.cos(ar) * activeCamera.farClipPlane);
+        let ty: number = activeCamera.transform.position.y + (Math.sin(ar) * activeCamera.farClipPlane);
+        let hd: number = this._origin.x - tx;
+        let vd: number = this._origin.y - ty;
+        let st: number = Math.abs(hd) > Math.abs(vd) ? Math.abs(hd) : Math.abs(vd);
+        let xd: number = hd / st;
+        let yd: number = vd / st;
         let oxi = Math.floor(this._origin.x);
         let oyi = Math.floor(this._origin.y);
         let txi = Math.floor(tx);
@@ -154,18 +150,16 @@ namespace jcast {
         let txip1 = txi + 1;
         let tyip1 = tyi + 1;
 
+        this._relative.x = tx - xl;
+        this._relative.y = ty - yl;
+
         if (oxi == txi && oyi == tyi) {
           let block: Block | null = this._map.getBlock(txi, tyi);
-
-          if (block) {
-            block.transform.position.x = txi;
-            block.transform.position.y = tyi;
-          }
 
           this._target.x = tx;
           this._target.y = ty;
 
-          block?.render(this, fx, true, false, this._origin, this._step, this._target);
+          block?.render(this, a, true, false, this._origin, this._relative, this._step, this._target);
         } else {
           if (xd == -1 || xd == 1) {
             if (xd == -1) {
@@ -214,59 +208,18 @@ namespace jcast {
                 (yd > 0 && this._target.y >= oyi)
               )
             ) {
-              // Draw the reached point:
-              // let pw: number = 3;
-              // let ph: number = 3;
-              // this.context!.fillStyle = 'red';
-              // this.context?.fillRect(this._target.x - (pw / 2), this._target.y - (ph / 2), pw, ph);
-              //
-
               break;
             }
 
-            block?.render(this, fx, false, true, this._origin, this._step, this._target);
+            block?.render(this, a, false, true, this._origin, this._relative, this._step, this._target);
           } while (true);
 
-          block?.render(this, fx, true, true, this._origin, this._step, this._target);
+          block?.render(this, a, true, true, this._origin, this._relative, this._step, this._target);
         }
 
-        // Draw line from target to origin:
-        // this._context!.strokeStyle = 'rgba(0, 255, 0, 0.5)';
-        // this._context?.beginPath();
-        // this._context?.moveTo(tx, ty);
-        // this._context?.lineTo(this._origin.x, this._origin.y);
-        // this._context?.stroke();
-        //
-
-        this._origin.x += xs;
-        this._origin.y += ys;
-
-        tx += xs;
-        ty += ys;
-      }
-
-      // Draw angle:
-      // this._context!.strokeStyle = 'red';
-      // this._context?.beginPath();
-      // this._context?.moveTo(activeCamera.transform.position.x, activeCamera.transform.position.y);
-      // this._context?.lineTo(activeCamera.transform.position.x + (Math.cos(activeCamera.transform.rotation.y) * activeCamera.farClipPlane), activeCamera.transform.position.y + (Math.sin(activeCamera.transform.rotation.y) * activeCamera.farClipPlane));
-      // this._context?.stroke();
-      //
-
-      // Draw camera point:
-      // let cw: number = 3;
-      // let ch: number = 3;
-      // this.context!.fillStyle = 'blue';
-      // this.context?.fillRect(activeCamera.transform.position.x - (cw / 2), activeCamera.transform.position.y - (ch / 2), cw, ch);
-      //
-
-      // Draw directions steps:
-      // this._context!.font = '16px Arial Bold';
-      // this._context?.fillText(`XD: ${xd} YD: ${yd}`, 20, 20);
-      //
-
-      if (this._renderMode == Renderer.RENDER_MODE_RAF) {
-        window.requestAnimationFrame(() => this.render());
+        if (this._renderMode == Renderer.RENDER_MODE_RAF) {
+          window.requestAnimationFrame(() => this.render());
+        }
       }
     }
   }

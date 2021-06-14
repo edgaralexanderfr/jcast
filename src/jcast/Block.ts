@@ -20,15 +20,19 @@ namespace jcast {
       this._wall = value;
     }
 
-    public render(renderer: Renderer, fx: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, step: Vector3, target: Vector3): void {
+    public render(renderer: Renderer, a: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, relative: Vector3, step: Vector3, target: Vector3): void {
       let map: Map | undefined = renderer.map;
+      let activeCamera: Camera | undefined = map?.activeCamera;
       let context: CanvasRenderingContext2D | null = renderer.context;
 
-      // if (!isClosestTarget || !hit || !map || !context || !this._wall || !this._wall.color) {
-      if (!hit || !map || !context || !this._wall || !this._wall.color) {
+      // if (!isClosestTarget || !hit || !map || !activeCamera || !context || !this._wall || !this._wall.color) {
+      if (!hit || !map || !activeCamera || !context || !this._wall || !this._wall.color) {
         return;
       }
 
+      let eulerAngles: Vector3 = activeCamera.transform.eulerAngles;
+      let hf: number = renderer.fov / 2;
+      let aa: number = a - (eulerAngles.y - hf);
       let depth = map.depth;
       let rendererHeight = renderer.height;
       let distance: number = Math.sqrt(Math.pow(target.x - origin.x, 2) + Math.pow(target.y - origin.y, 2));
@@ -38,8 +42,8 @@ namespace jcast {
         return;
       }
 
-      context.fillStyle = this._wall.color.toHexString();
-      context.fillRect((fx * renderer.width) / renderer.fov, (rendererHeight - height) / 2, 1, height); // TODO: Pre-calculate Pixel Size
+      context.fillStyle = this._wall.color.toRGBAString();
+      context.fillRect((aa * renderer.width) / renderer.fov, (rendererHeight - height) / 2, renderer.width / renderer.fov, height); // TODO: Pre-calculate Pixel Size
     }
   }
 }

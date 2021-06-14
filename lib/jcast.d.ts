@@ -15,7 +15,7 @@ declare namespace jcast {
         });
         get wall(): Wall | undefined;
         set wall(value: Wall | undefined);
-        render(renderer: Renderer, fx: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, step: Vector3, target: Vector3): void;
+        render(renderer: Renderer, a: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, relative: Vector3, step: Vector3, target: Vector3): void;
     }
 }
 declare namespace jcast {
@@ -97,6 +97,8 @@ declare namespace jcast {
 declare namespace jcast {
     class Mathf {
         static readonly HALF_PI: number;
+        static degToRad(deg: number): number;
+        static radToDeg(rad: number): number;
     }
 }
 declare namespace jcast {
@@ -116,6 +118,7 @@ declare namespace jcast {
         private _renderMode;
         private _intervalID;
         private _origin;
+        private _relative;
         private _target;
         private _step;
         constructor({ canvas, map, fov, fps }: {
@@ -145,6 +148,7 @@ declare namespace jcast {
     class Transform {
         position: Vector3;
         rotation: Vector3;
+        get eulerAngles(): Vector3;
         constructor({ position, rotation }?: {
             position?: Vector3;
             rotation?: Vector3;
