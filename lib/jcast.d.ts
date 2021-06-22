@@ -15,7 +15,7 @@ declare namespace jcast {
         });
         get wall(): Wall | undefined;
         set wall(value: Wall | undefined);
-        render(renderer: Renderer, c: number, sx: number, sy: number, dx: number, dy: number, side: number): void;
+        render(renderer: Renderer, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number): void;
     }
 }
 declare namespace jcast {
@@ -76,13 +76,17 @@ declare namespace jcast {
         private _height;
         private _depth;
         private _name?;
+        private _bgColor?;
+        private _floorColor?;
         private _blocks;
-        constructor({ camera, width, height, depth, name }?: {
+        constructor({ camera, width, height, depth, name, bgColor, floorColor }?: {
             camera?: Camera;
             width?: number;
             height?: number;
             depth?: number;
             name?: string | undefined;
+            bgColor?: Color;
+            floorColor?: Color;
         });
         get activeCamera(): Camera | undefined;
         set activeCamera(value: Camera | undefined);
@@ -92,6 +96,10 @@ declare namespace jcast {
         set depth(value: number);
         get name(): string | undefined;
         set name(value: string | undefined);
+        get bgColor(): Color | undefined;
+        set bgColor(value: Color | undefined);
+        get floorColor(): Color | undefined;
+        set floorColor(value: Color | undefined);
         nullify(): void;
         getBlock(x: number, y: number): Block | null;
         setBlock(x: number, y: number, block: Block | null): void;

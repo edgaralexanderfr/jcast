@@ -5,12 +5,16 @@ namespace jcast {
     private _height: number = 0;
     private _depth: number = 0.0;
     private _name?: string;
+    private _bgColor?: Color;
+    private _floorColor?: Color;
     private _blocks: Block[][] | null[][] = [];
 
-    public constructor({ camera = undefined, width = 64, height = 64, depth = 1, name = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined } = {}) {
+    public constructor({ camera = undefined, width = 64, height = 64, depth = 1, name = undefined, bgColor = undefined, floorColor = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined, bgColor?: Color, floorColor?: Color } = {}) {
       this.activeCamera = camera;
       this.depth = depth;
       this.name = name;
+      this.bgColor = bgColor;
+      this.floorColor = floorColor;
 
       if (width > 0) {
         this._width = Math.round(width);
@@ -53,6 +57,22 @@ namespace jcast {
 
     set name(value: string | undefined) {
       this._name = value;
+    }
+
+    get bgColor(): Color | undefined {
+      return this._bgColor;
+    }
+
+    set bgColor(value: Color | undefined) {
+      this._bgColor = value;
+    }
+
+    get floorColor(): Color | undefined {
+      return this._floorColor;
+    }
+
+    set floorColor(value: Color | undefined) {
+      this._floorColor = value;
     }
 
     public nullify(): void {

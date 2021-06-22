@@ -113,6 +113,16 @@ namespace jcast {
       let map = this._map;
       let camera: Camera = this._map.activeCamera;
 
+      if (map.bgColor) {
+        this._context!.fillStyle = map.bgColor.toRGBAString();
+        this._context?.fillRect(0, 0, this.width, this.height);
+      }
+
+      if (map.floorColor) {
+        this._context!.fillStyle = map.floorColor.toRGBAString();
+        this._context?.fillRect(0, Math.max(0, (camera.transform.rotation.z * 100) + (this.height / 2)), this.width, this.height);
+      }
+
       for (let c: number = 0; c < this.width; c++) {
         let cx: number = 2 * c / this.width - 1;
         let dx: number = Math.cos(camera.transform.rotation.y) + camera.plane.x * cx;
@@ -150,11 +160,16 @@ namespace jcast {
             side = 1;
           }
 
+          let x: number = camera.transform.position.x;
+          let y: number = camera.transform.position.y;
+          let distance: number = (side == 0) ? (mx - x + (1 - sx) / 2) / dx : (my - y + (1 - sy) / 2) / dy;
           let block: Block | null = map.getBlock(mx, my);
 
           if (block) {
-            block.render(this, c, sx, sy, dx, dy, side);
+            block.render(this, c, distance, sx, sy, dx, dy, side);
+          }
 
+          if (distance >= camera.farClipPlane) {
             break;
           }
         }
