@@ -35,5 +35,13 @@ namespace jcast {
       renderer.context!.fillStyle = color.toRGBAString();
       renderer.context!.fillRect(c, wy, 1, height);
     }
+
+    public static render(renderer: Renderer, hits: { block: Block, mx: number, my: number, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number }[]): void {
+      for (let i: number = hits.length - 1; i >= 0; i--) {
+        let hit = hits[i];
+
+        hit.block.render(renderer, hit.c, hit.distance, hit.sx, hit.sy, hit.dx, hit.dy, hit.side);
+      }
+    }
   }
 }

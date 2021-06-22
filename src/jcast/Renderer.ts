@@ -132,6 +132,18 @@ namespace jcast {
         let ddx: number = Math.sqrt(1 + (dy * dy) / (dx * dx));
         let ddy: number = Math.sqrt(1 + (dx * dx) / (dy * dy));
         let sx, sy, sdx, sdy, side;
+        let hits: {
+          block: Block,
+          mx: number,
+          my: number,
+          c: number,
+          distance: number,
+          sx: number,
+          sy: number,
+          dx: number,
+          dy: number,
+          side: number
+        }[] = [];
 
         if (dx < 0.0) {
           sx = -1;
@@ -166,13 +178,15 @@ namespace jcast {
           let block: Block | null = map.getBlock(mx, my);
 
           if (block) {
-            block.render(this, c, distance, sx, sy, dx, dy, side);
+            hits.push({ block, mx, my, c, distance, sx, sy, dx, dy, side });
           }
 
           if (distance >= camera.farClipPlane) {
             break;
           }
         }
+
+        Block.render(this, hits);
       }
 
       if (this._renderMode == Renderer.RENDER_MODE_RAF) {

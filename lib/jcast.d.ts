@@ -16,6 +16,18 @@ declare namespace jcast {
         get wall(): Wall | undefined;
         set wall(value: Wall | undefined);
         render(renderer: Renderer, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number): void;
+        static render(renderer: Renderer, hits: {
+            block: Block;
+            mx: number;
+            my: number;
+            c: number;
+            distance: number;
+            sx: number;
+            sy: number;
+            dx: number;
+            dy: number;
+            side: number;
+        }[]): void;
     }
 }
 declare namespace jcast {
