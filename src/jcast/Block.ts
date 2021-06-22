@@ -20,30 +20,25 @@ namespace jcast {
       this._wall = value;
     }
 
-    public render(renderer: Renderer, a: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, relative: Vector3, step: Vector3, target: Vector3): void {
+    public render(renderer: Renderer, c: number, sx: number, sy: number, dx: number, dy: number, side: number): void {
       let map: Map | undefined = renderer.map;
-      let activeCamera: Camera | undefined = map?.activeCamera;
-      let context: CanvasRenderingContext2D | null = renderer.context;
+      let camera: Camera | undefined = renderer.map?.activeCamera;
+      let color: Color | undefined = this._wall?.color;
 
-      // if (!isClosestTarget || !hit || !map || !activeCamera || !context || !this._wall || !this._wall.color) {
-      if (!hit || !map || !activeCamera || !context || !this._wall || !this._wall.color) {
+      if (!map || !camera || !color) {
         return;
       }
 
-      let eulerAngles: Vector3 = activeCamera.transform.eulerAngles;
-      let hf: number = renderer.fov / 2;
-      let aa: number = a - (eulerAngles.y - hf);
-      let depth = map.depth;
-      let rendererHeight = renderer.height;
-      let distance: number = Math.sqrt(Math.pow(target.x - origin.x, 2) + Math.pow(target.y - origin.y, 2));
-      let height: number = ((depth - (Math.min(depth, distance))) * rendererHeight) / depth;
+      let x: number = camera.transform.position.x;
+      let y: number = camera.transform.position.y;
+      let mx: number = this.transform.position.x;
+      let my: number = this.transform.position.y;
+      let distance: number = (side == 0) ? (mx - x + (1 - sx) / 2) / dx : (my - y + (1 - sy) / 2) / dy;
+      let height: number = Math.floor(map.depth * renderer.height / distance);
+      let wy: number = Math.floor((renderer.height - height) / 2);
 
-      if (height == 0) {
-        return;
-      }
-
-      context.fillStyle = this._wall.color.toRGBAString();
-      context.fillRect((aa * renderer.width) / renderer.fov, (rendererHeight - height) / 2, renderer.width / renderer.fov, height); // TODO: Pre-calculate Pixel Size
+      renderer.context!.fillStyle = color.toRGBAString();
+      renderer.context!.fillRect(c, wy, 1, height);
     }
   }
 }

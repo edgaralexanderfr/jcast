@@ -15,18 +15,21 @@ declare namespace jcast {
         });
         get wall(): Wall | undefined;
         set wall(value: Wall | undefined);
-        render(renderer: Renderer, a: number, isClosestTarget: boolean, hit: boolean, origin: Vector3, relative: Vector3, step: Vector3, target: Vector3): void;
+        render(renderer: Renderer, c: number, sx: number, sy: number, dx: number, dy: number, side: number): void;
     }
 }
 declare namespace jcast {
     class Camera extends Interactive {
+        plane: Vector3;
         private _farClipPlane;
-        constructor({ transform, farClipPlane }?: {
+        constructor({ transform, plane, farClipPlane }?: {
             transform?: Transform;
+            plane?: Vector3;
             farClipPlane?: number;
         });
         get farClipPlane(): number;
         set farClipPlane(value: number);
+        rotate(x: number, y: number, z: number): void;
     }
 }
 declare namespace jcast {
@@ -111,19 +114,13 @@ declare namespace jcast {
         private _width;
         private _height;
         private _context;
-        private _fov;
         private _fps;
         private _map?;
         private _rendering;
         private _renderMode;
         private _intervalID;
-        private _origin;
-        private _relative;
-        private _target;
-        private _step;
-        constructor({ canvas, map, fov, fps }: {
+        constructor({ canvas, map, fps }: {
             canvas: HTMLCanvasElement;
-            fov?: number;
             fps?: number;
             map?: Map;
         });
@@ -132,8 +129,6 @@ declare namespace jcast {
         get width(): number;
         get height(): number;
         get context(): CanvasRenderingContext2D | null;
-        get fov(): number;
-        set fov(value: number);
         get fps(): number;
         set fps(value: number);
         get map(): Map | undefined;
@@ -142,6 +137,13 @@ declare namespace jcast {
         start(): void;
         stop(): void;
         private render;
+    }
+}
+declare namespace jcast {
+    class Time {
+        static deltaTime: number;
+        private static _lastTime;
+        static update(): void;
     }
 }
 declare namespace jcast {

@@ -7,7 +7,7 @@ namespace jcast {
     private _name?: string;
     private _blocks: Block[][] | null[][] = [];
 
-    public constructor({ camera = undefined, width = 64, height = 64, depth = 10.0, name = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined } = {}) {
+    public constructor({ camera = undefined, width = 64, height = 64, depth = 1, name = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined } = {}) {
       this.activeCamera = camera;
       this.depth = depth;
       this.name = name;
