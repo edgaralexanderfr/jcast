@@ -2,38 +2,45 @@
 
 namespace jcast {
   export class Block extends Interactive {
-    private _wall?: Wall;
+    private _walls?: Wall[];
 
-    public constructor({ wall = undefined, transform = undefined }: { wall?: Wall, transform?: Transform } = {}) {
+    public constructor({ walls = [], transform = undefined }: { walls?: Wall[], transform?: Transform } = {}) {
       super({
         transform
       });
 
-      this.wall = wall;
+      this.walls = walls;
     }
 
-    get wall(): Wall | undefined {
-      return this._wall;
+    get walls(): Wall[] | undefined {
+      return this._walls;
     }
 
-    set wall(value: Wall | undefined) {
-      this._wall = value;
+    set walls(value: Wall[] | undefined) {
+      this._walls = value;
     }
 
     public render(renderer: Renderer, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number): void {
       let map: Map | undefined = renderer.map;
       let camera: Camera | undefined = renderer.map?.activeCamera;
-      let color: Color | undefined = this._wall?.color;
 
-      if (!map || !camera || !color) {
+      if (!map || !camera || !this._walls || this._walls.length == 0) {
         return;
       }
 
       let height: number = Math.floor(map.depth * renderer.height / distance);
       let wy: number = Math.floor((camera.transform.rotation.z * 100) + (renderer.height - height) / 2);
 
-      renderer.context!.fillStyle = color.toRGBAString();
-      renderer.context!.fillRect(c, wy, 1, height);
+      for (let i: number = 0; i < this._walls.length && wy + height > 0; i++) {
+        let wall: Wall = this._walls[i];
+
+        if (wall.color) {
+          renderer.context!.fillStyle = wall.color.toRGBAString();
+          renderer.context!.fillRect(c, wy, 1, height);
+        }
+
+        wy -= height;
+      }
     }
 
     public static render(renderer: Renderer, hits: { block: Block, mx: number, my: number, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number }[]): void {
