@@ -10,11 +10,11 @@ declare namespace jcast {
     class Block extends Interactive {
         private _walls?;
         constructor({ walls, transform }?: {
-            walls?: Wall[];
+            walls?: Wall[] | null[];
             transform?: Transform;
         });
-        get walls(): Wall[] | undefined;
-        set walls(value: Wall[] | undefined);
+        get walls(): Wall[] | null[] | undefined;
+        set walls(value: Wall[] | null[] | undefined);
         render(renderer: Renderer, c: number, distance: number, sx: number, sy: number, dx: number, dy: number, side: number): void;
         static render(renderer: Renderer, hits: {
             block: Block;

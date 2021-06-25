@@ -2,9 +2,9 @@
 
 namespace jcast {
   export class Block extends Interactive {
-    private _walls?: Wall[];
+    private _walls?: Wall[] | null[];
 
-    public constructor({ walls = [], transform = undefined }: { walls?: Wall[], transform?: Transform } = {}) {
+    public constructor({ walls = [], transform = undefined }: { walls?: Wall[] | null[], transform?: Transform } = {}) {
       super({
         transform
       });
@@ -12,11 +12,11 @@ namespace jcast {
       this.walls = walls;
     }
 
-    get walls(): Wall[] | undefined {
+    get walls(): Wall[] | null[] | undefined {
       return this._walls;
     }
 
-    set walls(value: Wall[] | undefined) {
+    set walls(value: Wall[] | null[] | undefined) {
       this._walls = value;
     }
 
@@ -32,9 +32,9 @@ namespace jcast {
       let wy: number = Math.floor((camera.transform.rotation.z * 100) + (renderer.height - height) / 2);
 
       for (let i: number = 0; i < this._walls.length && wy + height > 0; i++) {
-        let wall: Wall = this._walls[i];
+        let wall: Wall | null = this._walls[i];
 
-        if (wall.color) {
+        if (wall && wall.color) {
           renderer.context!.fillStyle = wall.color.toRGBAString();
           renderer.context!.fillRect(c, wy, 1, height);
         }
