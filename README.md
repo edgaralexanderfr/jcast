@@ -16,7 +16,7 @@
 Include the minified version of the JCast Engine into the HEAD your HTML file:
 
 ```html
-<script type="text/javascript" src="/jcast/lib/jcast.min.js"></script>
+<script type="text/javascript" src="lib/jcast.min.js"></script>
 ```
 
 Add a canvas tag into the BODY of your HTML file:
