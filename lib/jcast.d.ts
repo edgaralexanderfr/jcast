@@ -88,17 +88,17 @@ declare namespace jcast {
         private _height;
         private _depth;
         private _name?;
-        private _bgColor?;
-        private _floorColor?;
+        private _bg?;
+        private _floor?;
         private _blocks;
-        constructor({ camera, width, height, depth, name, bgColor, floorColor }?: {
+        constructor({ camera, width, height, depth, name, bg, floor }?: {
             camera?: Camera;
             width?: number;
             height?: number;
             depth?: number;
             name?: string | undefined;
-            bgColor?: Color;
-            floorColor?: Color;
+            bg?: Material;
+            floor?: Material;
         });
         get activeCamera(): Camera | undefined;
         set activeCamera(value: Camera | undefined);
@@ -108,13 +108,21 @@ declare namespace jcast {
         set depth(value: number);
         get name(): string | undefined;
         set name(value: string | undefined);
-        get bgColor(): Color | undefined;
-        set bgColor(value: Color | undefined);
-        get floorColor(): Color | undefined;
-        set floorColor(value: Color | undefined);
+        get bg(): Material | undefined;
+        set bg(value: Material | undefined);
+        get floor(): Material | undefined;
+        set floor(value: Material | undefined);
         nullify(): void;
         getBlock(x: number, y: number): Block | null;
         setBlock(x: number, y: number, block: Block | null): void;
+    }
+}
+declare namespace jcast {
+    class Material {
+        color?: Color;
+        constructor({ color }?: {
+            color?: Color;
+        });
     }
 }
 declare namespace jcast {
@@ -192,12 +200,12 @@ declare namespace jcast {
 }
 declare namespace jcast {
     class Wall {
-        private _color?;
-        constructor({ color }?: {
-            color?: Color;
+        private _material?;
+        constructor({ material }?: {
+            material?: Material;
         });
-        get color(): Color | undefined;
-        set color(value: Color | undefined);
+        get material(): Material | undefined;
+        set material(value: Material | undefined);
     }
 }
 declare namespace jcast {

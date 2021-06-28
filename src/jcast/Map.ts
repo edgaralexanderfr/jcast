@@ -5,16 +5,16 @@ namespace jcast {
     private _height: number = 0;
     private _depth: number = 0.0;
     private _name?: string;
-    private _bgColor?: Color;
-    private _floorColor?: Color;
+    private _bg?: Material;
+    private _floor?: Material;
     private _blocks: Block[][] | null[][] = [];
 
-    public constructor({ camera = undefined, width = 64, height = 64, depth = 1, name = undefined, bgColor = undefined, floorColor = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined, bgColor?: Color, floorColor?: Color } = {}) {
+    public constructor({ camera = undefined, width = 64, height = 64, depth = 1, name = undefined, bg = undefined, floor = undefined }: { camera?: Camera, width?: number, height?: number, depth?: number, name?: string | undefined, bg?: Material, floor?: Material } = {}) {
       this.activeCamera = camera;
       this.depth = depth;
       this.name = name;
-      this.bgColor = bgColor;
-      this.floorColor = floorColor;
+      this.bg = bg;
+      this.floor = floor;
 
       if (width > 0) {
         this._width = Math.round(width);
@@ -59,20 +59,20 @@ namespace jcast {
       this._name = value;
     }
 
-    get bgColor(): Color | undefined {
-      return this._bgColor;
+    get bg(): Material | undefined {
+      return this._bg;
     }
 
-    set bgColor(value: Color | undefined) {
-      this._bgColor = value;
+    set bg(value: Material | undefined) {
+      this._bg = value;
     }
 
-    get floorColor(): Color | undefined {
-      return this._floorColor;
+    get floor(): Material | undefined {
+      return this._floor;
     }
 
-    set floorColor(value: Color | undefined) {
-      this._floorColor = value;
+    set floor(value: Material | undefined) {
+      this._floor = value;
     }
 
     public nullify(): void {

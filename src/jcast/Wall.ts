@@ -1,17 +1,17 @@
 namespace jcast {
   export class Wall {
-    private _color?: Color;
+    private _material?: Material;
 
-    public constructor({ color = undefined }: { color?: Color } = {}) {
-      this.color = color;
+    public constructor({ material = new Material() }: { material?: Material } = {}) {
+      this.material = material;
     }
 
-    get color(): Color | undefined {
-      return this._color;
+    get material(): Material | undefined {
+      return this._material;
     }
 
-    set color(value: Color | undefined) {
-      this._color = value;
+    set material(value: Material | undefined) {
+      this._material = value;
     }
   }
 }

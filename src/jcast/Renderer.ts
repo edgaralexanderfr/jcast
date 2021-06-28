@@ -113,13 +113,13 @@ namespace jcast {
       let map = this._map;
       let camera: Camera = this._map.activeCamera;
 
-      if (map.bgColor) {
-        this._context!.fillStyle = map.bgColor.toRGBAString();
+      if (map.bg && map.bg.color) {
+        this._context!.fillStyle = map.bg.color.toRGBAString();
         this._context?.fillRect(0, 0, this.width, this.height);
       }
 
-      if (map.floorColor) {
-        this._context!.fillStyle = map.floorColor.toRGBAString();
+      if (map.floor && map.floor.color) {
+        this._context!.fillStyle = map.floor.color.toRGBAString();
         this._context?.fillRect(0, Math.max(0, (camera.transform.rotation.z * 100) + (this.height / 2)), this.width, this.height);
       }
 

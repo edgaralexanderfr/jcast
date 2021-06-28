@@ -34,8 +34,8 @@ namespace jcast {
       for (let i: number = 0; i < this._walls.length && wy + height > 0; i++) {
         let wall: Wall | null = this._walls[i];
 
-        if (wall && wall.color) {
-          renderer.context!.fillStyle = wall.color.toRGBAString();
+        if (wall && wall.material && wall.material.color) {
+          renderer.context!.fillStyle = wall.material.color.toRGBAString();
           renderer.context!.fillRect(c, wy, 1, height);
         }
 

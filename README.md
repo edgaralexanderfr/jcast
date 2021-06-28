@@ -16,7 +16,7 @@
 Include the minified version of the JCast Engine into the HEAD your HTML file:
 
 ```html
-<script type="text/javascript" src="lib/jcast.min.js"></script>
+<script type="text/javascript" src="/lib/jcast.min.js"></script>
 ```
 
 Add a canvas tag into the BODY of your HTML file:
@@ -42,38 +42,48 @@ camera.transform.position.x =
 camera.transform.position.y = 5;
 ```
 
-Define and instantiate your colours to be used:
+Define your coloured materials to be used:
 
 ```javascript
-var bgColor = new jcast.Color({
-  r: 162,
-  g: 218,
-  b: 235
+var bgMaterial = new jcast.Material({
+  color: new jcast.Color({
+    r: 162,
+    g: 218,
+    b: 235
+  })
 });
 
-var floorColor = new jcast.Color({
-  r: 150,
-  g: 150,
-  b: 150
+var floorMaterial = new jcast.Material({
+  color: new jcast.Color({
+    r: 150,
+    g: 150,
+    b: 150
+  })
 });
 
-var blockColor = new jcast.Color({
-  r: 195,
-  g: 195,
-  b: 195
+var blockMaterial = new jcast.Material({
+  color: new jcast.Color({
+    r: 195,
+    g: 195,
+    b: 195
+  })
 });
 
-var pillarColor = new jcast.Color({
-  r: 200,
-  g: 200,
-  b: 200
+var pillarMaterial = new jcast.Material({
+  color: new jcast.Color({
+    r: 200,
+    g: 200,
+    b: 200
+  })
 });
 
-var glassColor = new jcast.Color({
-  r: 200,
-  g: 0,
-  b: 200,
-  a: 0.5
+var glassMaterial = new jcast.Material({
+  color: new jcast.Color({
+    r: 200,
+    g: 0,
+    b: 200,
+    a: 0.5
+  })
 });
 ```
 
@@ -83,7 +93,7 @@ Define and instantiate your blocks/walls:
 var block = new jcast.Block({
   walls: [
     new jcast.Wall({
-      color: blockColor
+      material: blockMaterial
     })
   ]
 });
@@ -91,10 +101,10 @@ var block = new jcast.Block({
 var pillarBlock = new jcast.Block({
   walls: [
     new jcast.Wall({
-      color: pillarColor
+      material: pillarMaterial
     }),
     new jcast.Wall({
-      color: pillarColor
+      material: pillarMaterial
     })
   ]
 });
@@ -102,7 +112,7 @@ var pillarBlock = new jcast.Block({
 var glassBlock = new jcast.Block({
   walls: [
     new jcast.Wall({
-      color: glassColor
+      material: glassMaterial
     })
   ]
 });
@@ -117,8 +127,8 @@ var map = new jcast.Map({
   depth: 1,
   name: 'Test Map',
   camera,
-  bgColor,
-  floorColor
+  bg: bgMaterial,
+  floor: floorMaterial
 });
 ```
 
@@ -169,7 +179,7 @@ setInterval(() => {
 }, 1000 / 60);
 ```
 
-The result will be the animation from above. This project is under construction.
+The result will be the animation from above, you can check out the full source [here](examples/v0.0.1/demo/index.html) and also see the [running example here](https://edgaralexanderfr.github.io/jcast/examples/v0.0.1/demo/). This project is under construction.
 
 <a name="credits"></a>
 ## Credits
