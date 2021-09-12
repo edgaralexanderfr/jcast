@@ -30,6 +30,7 @@ namespace jcast {
       this.plane.y = planeX * Math.sin(y) + this.plane.y * Math.cos(y);
 
       this.transform.rotation.y += y;
+      this.transform.rotation.z += z;
     }
   }
 }

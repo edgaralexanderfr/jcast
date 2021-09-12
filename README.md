@@ -164,18 +164,14 @@ Add rotation and bouncing to the camera with an interval:
 var vrs = 0.01;
 
 setInterval(() => {
-  // Rotate horizontally:
-  camera.rotate(0, 1 * jcast.Time.deltaTime, 0);
-
-  // Bounce vertically:
-
   var z = camera.transform.rotation.z;
 
   if (z >= 1.0 || z <= -1.0) {
     vrs *= -1;
   }
 
-  camera.transform.rotation.z += vrs;
+  // Rotate horizontally and vertically:
+  camera.rotate(0, jcast.Time.deltaTime, vrs);
 }, 1000 / 60);
 ```
 
