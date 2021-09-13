@@ -1,4 +1,36 @@
 declare namespace jcast {
+    class Asset {
+        private _data;
+        private _assets;
+        constructor({ data }: {
+            data?: AssetData;
+        });
+        get(section: string, name: string): any;
+        /**
+         * TODO: Create load routines for each resource type...
+         * @param callback
+         */
+        load(callback?: (loaded: number, total: number) => void): void;
+        getAssetsCount(): number;
+    }
+}
+declare namespace jcast {
+    export interface AssetData {
+        displayLogs: boolean;
+        sections: SectionData[];
+    }
+    interface SectionData {
+        name: string;
+        resources: ResourceData[];
+    }
+    interface ResourceData {
+        name: string;
+        url: string | string[2];
+        type: 'image' | 'color';
+    }
+    export {};
+}
+declare namespace jcast {
     abstract class Interactive {
         transform: Transform;
         constructor({ transform }?: {
@@ -71,14 +103,25 @@ declare namespace jcast {
 }
 declare namespace jcast {
     class JCast {
+        static readonly NAME = "JCast Engine";
+        static readonly VERSION = "v0.0.1";
         private _renderer;
-        constructor({ canvas, map }: {
+        private _asset;
+        constructor({ canvas, data, map }: {
             canvas: HTMLCanvasElement;
+            data: JCastData;
             map?: Map;
         });
         get renderer(): Renderer;
+        get asset(): Asset;
         start(): void;
         stop(): void;
+        static getIdentifier(): string;
+    }
+}
+declare namespace jcast {
+    interface JCastData {
+        assets: AssetData;
     }
 }
 declare namespace jcast {
@@ -209,9 +252,15 @@ declare namespace jcast {
     }
 }
 declare namespace jcast {
-    function init({ canvas, map }: {
+    function init({ canvas, data, map }: {
         canvas: HTMLCanvasElement;
+        data: JCastData;
         map?: Map;
     }): JCast;
+}
+declare namespace jcast {
+    namespace http {
+        function get(url: string, params: any, callback: (params: any, data: any) => any): void;
+    }
 }
 //# sourceMappingURL=jcast.d.ts.map
