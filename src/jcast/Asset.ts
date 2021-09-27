@@ -15,17 +15,11 @@ namespace jcast {
       return null;
     }
 
-    /**
-     * TODO: Create load routines for each resource type...
-     * @param callback
-     */
     public load(callback?: (loaded: number, total: number) => void): void {
       let total: number = this.getAssetsCount();
       let loaded: number = 0;
 
-      if (this._data.displayLogs) {
-        console.log(`${JCast.getIdentifier()}: Loading game assets...`);
-      }
+      this.logLoadingGameAssets();
 
       for (let section of this._data.sections) {
         if (this._assets[section.name] == undefined) {
@@ -34,93 +28,134 @@ namespace jcast {
 
         for (let resource of section.resources) {
           if (this._assets[section.name][resource.name] != undefined) {
-            loaded++;
+            loaded += resource.url.length;
 
-            if (this._data.displayLogs) {
-              console.warn(`${JCast.getIdentifier()}: Skipping already loaded resource`);
-            }
+            this.logSkippingAlreadyLoadedResource();
 
             continue;
           }
 
           switch (resource.type) {
-            case 'image':
-              let image: HTMLImageElement = new Image();
+            case 'material':
+              this._assets[section.name][resource.name] = new Material();
 
-              image.onload = e => {
-                loaded++;
+              if (resource.url.length > 0) {
+                this.loadTexture(resource.url[0], section, resource, (section, resource, texture) => {
+                  this._assets[section.name][resource.name].texture = texture;
 
-                if (loaded == total) {
-                  if (callback) {
-                    callback(loaded, total);
-                  }
+                  loaded++;
 
-                  if (this._data.displayLogs) {
-                    console.log(`${JCast.getIdentifier()}: All assets loaded correctly`);
-                  }
-                }
-              };
+                  this.logAllAssetsLoadedCorrectly(loaded, total, callback);
+                });
+              }
 
-              image.src = resource.url;
+              if (resource.url.length > 1) {
+                this.loadColor(resource.url[1], section, resource, (section, resource, color) => {
+                  this._assets[section.name][resource.name].color = color;
 
-              this._assets[section.name][resource.name] = image;
+                  loaded++;
+
+                  this.logAllAssetsLoadedCorrectly(loaded, total, callback);
+                });
+              }
               break;
-            case 'color':
-              let params: object = {
-                section: section.name,
-                resource: resource.name,
-              };
+            case 'data':
+              this._assets[section.name][resource.name] = {};
 
-              http.get(resource.url, params, (params, data) => {
-                let color: Color = new Color(data);
+              if (resource.url.length > 0) {
+                this.loadData(resource.url[0], section, resource, (section, resource, data) => {
+                  this._assets[section.name][resource.name] = data;
 
-                this._assets[params.section][params.resource] = color;
+                  loaded++;
 
-                loaded++;
-
-                if (loaded == total) {
-                  if (callback) {
-                    callback(loaded, total);
-                  }
-
-                  if (this._data.displayLogs) {
-                    console.log(`${JCast.getIdentifier()}: All assets loaded correctly`);
-                  }
-                }
-              });
+                  this.logAllAssetsLoadedCorrectly(loaded, total, callback);
+                });
+              }
               break;
             default:
-              loaded++;
+              loaded += resource.url.length;
 
-              if (this._data.displayLogs) {
-                console.warn(`${JCast.getIdentifier()}: Resource ${resource.name} has an invalid type`);
-              }
+              this.logResourceHasAnInvalidType(resource.name);
               break;
           }
         }
       }
 
-      if (loaded == total) {
-        if (callback) {
-          callback(loaded, total);
-        }
-
-        if (this._data.displayLogs) {
-          console.log(`${JCast.getIdentifier()}: All assets loaded correctly`);
-        }
-      }
+      this.logAllAssetsLoadedCorrectly(loaded, total, callback);
     }
 
     public getAssetsCount(): number {
       let total: number = 0;
 
       this._data.sections.forEach(section => {
-        section.resources.forEach(() => {
-          total++;
+        section.resources.forEach(resource => {
+          total += resource.url.length;
         });
       });
 
       return total;
+    }
+
+    private loadTexture(url: string, section: any, resource: any, callback?: (section: any, resource: any, texture: Texture) => void): void {
+      let image: HTMLImageElement = new Image();
+
+      image.onload = e => {
+        let texture: Texture = new Texture({ image });
+
+        if (callback) {
+          callback(section, resource, texture);
+        }
+      };
+
+      image.src = url;
+    }
+
+    private loadColor(url: string, section: any, resource: any, callback?: (section: any, resource: any, color: Color) => void): void {
+      http.get(url, data => {
+        let color: Color = new Color(data);
+
+        if (callback) {
+          callback(section, resource, color);
+        }
+      });
+    }
+
+    private loadData(url: string, section: any, resource: any, callback?: (section: any, resource: any, data: any) => void): void {
+      http.get(url, data => {
+        if (callback) {
+          callback(section, resource, data);
+        }
+      });
+    }
+
+    private logLoadingGameAssets(): void {
+      if (this._data.displayLogs) {
+        console.log(`${JCast.getIdentifier()}: Loading game assets...`);
+      }
+    }
+
+    private logSkippingAlreadyLoadedResource(): void {
+      if (this._data.displayLogs) {
+        console.warn(`${JCast.getIdentifier()}: Skipping already loaded resource`);
+      }
+    }
+
+    private logResourceHasAnInvalidType(name: string): void {
+      if (this._data.displayLogs) {
+        console.warn(`${JCast.getIdentifier()}: Resource ${name} has an invalid type`);
+      }
+    }
+
+    private logAllAssetsLoadedCorrectly(loaded: number, total: number, callback?: (loaded: number, total: number) => void): void {
+      if (loaded >= total) {
+        if (this._data.displayLogs) {
+          console.log(`${JCast.getIdentifier()}: All assets loaded correctly`);
+        }
+
+        if (callback) {
+          callback(loaded, total);
+        }
+      }
     }
   }
 }

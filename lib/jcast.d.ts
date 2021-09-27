@@ -6,12 +6,15 @@ declare namespace jcast {
             data?: AssetData;
         });
         get(section: string, name: string): any;
-        /**
-         * TODO: Create load routines for each resource type...
-         * @param callback
-         */
         load(callback?: (loaded: number, total: number) => void): void;
         getAssetsCount(): number;
+        private loadTexture;
+        private loadColor;
+        private loadData;
+        private logLoadingGameAssets;
+        private logSkippingAlreadyLoadedResource;
+        private logResourceHasAnInvalidType;
+        private logAllAssetsLoadedCorrectly;
     }
 }
 declare namespace jcast {
@@ -25,8 +28,8 @@ declare namespace jcast {
     }
     interface ResourceData {
         name: string;
-        url: string | string[2];
-        type: 'image' | 'color';
+        url: string[2];
+        type: 'material' | 'data';
     }
     export {};
 }
@@ -162,8 +165,10 @@ declare namespace jcast {
 }
 declare namespace jcast {
     class Material {
+        texture?: Texture;
         color?: Color;
-        constructor({ color }?: {
+        constructor({ texture, color }?: {
+            texture?: Texture;
             color?: Color;
         });
     }
@@ -208,6 +213,15 @@ declare namespace jcast {
         start(): void;
         stop(): void;
         private render;
+    }
+}
+declare namespace jcast {
+    class Texture {
+        private _image?;
+        get image(): HTMLImageElement | undefined;
+        constructor({ image }?: {
+            image?: HTMLImageElement;
+        });
     }
 }
 declare namespace jcast {
@@ -260,7 +274,7 @@ declare namespace jcast {
 }
 declare namespace jcast {
     namespace http {
-        function get(url: string, params: any, callback: (params: any, data: any) => any): void;
+        function get(url: string, callback: (data: any) => any): void;
     }
 }
 //# sourceMappingURL=jcast.d.ts.map

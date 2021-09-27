@@ -11,7 +11,7 @@ namespace jcast {
 
   interface ResourceData {
     name: string;
-    url: string | string[2];
-    type: 'image' | 'color';
+    url: string[2];
+    type: 'material' | 'data';
   }
 }
