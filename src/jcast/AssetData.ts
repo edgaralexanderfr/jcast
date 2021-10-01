@@ -1,6 +1,5 @@
 namespace jcast {
   export interface AssetData {
-    displayLogs: boolean;
     sections: SectionData[];
   }
 

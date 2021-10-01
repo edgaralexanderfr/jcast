@@ -1,11 +1,14 @@
 declare namespace jcast {
-    class Asset {
+    type OnLoadCallback = ((loaded: number, total: number, asset?: any) => void) | null;
+    export class Asset {
         private _data;
         private _assets;
+        private _onload;
         constructor({ data }: {
             data?: AssetData;
         });
         get(section: string, name: string): any;
+        onload(onload: OnLoadCallback): void;
         load(callback?: (loaded: number, total: number) => void): void;
         getAssetsCount(): number;
         private loadTexture;
@@ -16,10 +19,10 @@ declare namespace jcast {
         private logResourceHasAnInvalidType;
         private logAllAssetsLoadedCorrectly;
     }
+    export {};
 }
 declare namespace jcast {
     export interface AssetData {
-        displayLogs: boolean;
         sections: SectionData[];
     }
     interface SectionData {
@@ -102,6 +105,13 @@ declare namespace jcast {
         set a(value: number);
         toHexString(prefixed?: boolean): string;
         toRGBAString(): string;
+    }
+}
+declare namespace jcast {
+    class Console {
+        static displayLogs: boolean;
+        static log(output: any): void;
+        static warn(output: any): void;
     }
 }
 declare namespace jcast {

@@ -1,9 +1,12 @@
 namespace jcast {
-  export class Asset {
-    private _data: AssetData = { displayLogs: true, sections: [] };
-    private _assets: any = {};
+  type OnLoadCallback = ((loaded: number, total: number, asset?: any) => void) | null;
 
-    constructor({ data = { displayLogs: true, sections: [] } }: { data?: AssetData }) {
+  export class Asset {
+    private _data: AssetData = { sections: [] };
+    private _assets: any = {};
+    private _onload: OnLoadCallback = null;
+
+    constructor({ data = { sections: [] } }: { data?: AssetData }) {
       this._data = data;
     }
 
@@ -13,6 +16,10 @@ namespace jcast {
       }
 
       return null;
+    }
+
+    public onload(onload: OnLoadCallback): void {
+      this._onload = onload;
     }
 
     public load(callback?: (loaded: number, total: number) => void): void {
@@ -30,6 +37,7 @@ namespace jcast {
           if (this._assets[section.name][resource.name] != undefined) {
             loaded += resource.url.length;
 
+            if (this._onload) this._onload(loaded, total);
             this.logSkippingAlreadyLoadedResource();
 
             continue;
@@ -45,6 +53,7 @@ namespace jcast {
 
                   loaded++;
 
+                  if (this._onload) this._onload(loaded, total, texture);
                   this.logAllAssetsLoadedCorrectly(loaded, total, callback);
                 });
               }
@@ -55,6 +64,7 @@ namespace jcast {
 
                   loaded++;
 
+                  if (this._onload) this._onload(loaded, total, color);
                   this.logAllAssetsLoadedCorrectly(loaded, total, callback);
                 });
               }
@@ -68,6 +78,7 @@ namespace jcast {
 
                   loaded++;
 
+                  if (this._onload) this._onload(loaded, total, data);
                   this.logAllAssetsLoadedCorrectly(loaded, total, callback);
                 });
               }
@@ -75,6 +86,7 @@ namespace jcast {
             default:
               loaded += resource.url.length;
 
+              if (this._onload) this._onload(loaded, total);
               this.logResourceHasAnInvalidType(resource.name);
               break;
           }
@@ -129,28 +141,20 @@ namespace jcast {
     }
 
     private logLoadingGameAssets(): void {
-      if (this._data.displayLogs) {
-        console.log(`${JCast.getIdentifier()}: Loading game assets...`);
-      }
+      Console.log('Loading game assets...');
     }
 
     private logSkippingAlreadyLoadedResource(): void {
-      if (this._data.displayLogs) {
-        console.warn(`${JCast.getIdentifier()}: Skipping already loaded resource`);
-      }
+      Console.warn('Skipping already loaded resource');
     }
 
     private logResourceHasAnInvalidType(name: string): void {
-      if (this._data.displayLogs) {
-        console.warn(`${JCast.getIdentifier()}: Resource ${name} has an invalid type`);
-      }
+      Console.warn(`Resource ${name} has an invalid type`);
     }
 
     private logAllAssetsLoadedCorrectly(loaded: number, total: number, callback?: (loaded: number, total: number) => void): void {
       if (loaded >= total) {
-        if (this._data.displayLogs) {
-          console.log(`${JCast.getIdentifier()}: All assets loaded correctly`);
-        }
+        Console.log('All assets loaded correctly');
 
         if (callback) {
           callback(loaded, total);
