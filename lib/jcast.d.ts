@@ -227,8 +227,7 @@ declare namespace jcast {
 }
 declare namespace jcast {
     class Texture {
-        private _image?;
-        get image(): HTMLImageElement | undefined;
+        image?: HTMLImageElement;
         constructor({ image }?: {
             image?: HTMLImageElement;
         });
